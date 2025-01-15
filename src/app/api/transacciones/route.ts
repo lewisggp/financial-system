@@ -17,11 +17,13 @@ export async function GET() {
 
 // Crear una nueva transacción
 export async function POST(request: Request) {
-  const { monto, cuentaId, servicioId, usuarioId } = await request.json();
+  const { monto, fecha, cuentaId, servicioId, usuarioId } =
+    await request.json();
   try {
     const nuevaTransaccion = await prisma.transaccion.create({
       data: {
         monto,
+        fecha,
         cuentaId,
         servicioId,
         usuarioId,
@@ -38,12 +40,14 @@ export async function POST(request: Request) {
 
 // Actualizar una transacción existente
 export async function PATCH(request: Request) {
-  const { id, monto, cuentaId, servicioId, usuarioId } = await request.json();
+  const { id, monto, fecha, cuentaId, servicioId, usuarioId } =
+    await request.json();
   try {
     const transaccionActualizada = await prisma.transaccion.update({
       where: { id },
       data: {
         monto,
+        fecha,
         cuentaId,
         servicioId,
         usuarioId,

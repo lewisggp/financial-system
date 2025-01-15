@@ -37,7 +37,7 @@ export async function POST(request: Request) {
 
 // Actualizar una transferencia existente
 export async function PATCH(request: Request) {
-  const { id, destinatario, cuentaOrigenId, transaccionId } =
+  const { id, monto, destinatario, cuentaOrigenId, transaccionId } =
     await request.json();
   try {
     const transferenciaActualizada = await prisma.transferencia.update({
