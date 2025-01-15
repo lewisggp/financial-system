@@ -1,13 +1,6 @@
-// Next Imports
+import Providers from "@/components/Providers";
 import type { Metadata } from "next";
 import { Roboto, Roboto_Mono } from "next/font/google";
-
-// MUI Imports
-import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
-import { ThemeProvider } from "@mui/material/styles";
-
-import theme from "../theme";
-import "./globals.css";
 
 const robotoSans = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -36,9 +29,7 @@ export default function RootLayout({
       <body
         className={`${robotoSans.variable} ${robotoMono.variable} antialiased`}
       >
-        <AppRouterCacheProvider>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-        </AppRouterCacheProvider>
+        <Providers>{children}</Providers> {/* Aquí usamos Providers */}
       </body>
     </html>
   );
