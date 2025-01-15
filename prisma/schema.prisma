@@ -1,0 +1,99 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"  // Puedes usar PostgreSQL o MySQL si prefieres.
+  url      = "file:./dev.db"
+}
+
+enum Rol {
+  CLIENTE
+  ADMINISTRADOR
+}
+
+enum TipoCuenta {
+  AHORROS
+  CORRIENTE
+}
+
+enum TipoServicio {
+  PAGO
+  TRANSFERENCIA
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  direccion String
+  correo    String   @unique
+  telefono  String
+  rol       Rol
+  password  String
+  cuentas   Cuenta[]
+  transacciones Transaccion[]
+  clientes       Cliente[]
+  administradores Administrador[] @relation("GestionUsuarios")
+}
+
+model Cuenta {
+  id         Int      @id @default(autoincrement())
+  saldo      Float
+  tipo       TipoCuenta
+  usuarioId  Int
+  usuario    Usuario @relation(fields: [usuarioId], references: [id])
+  transacciones  Transaccion[]
+  transferencias Transferencia[] @relation("CuentaOrigen")
+}
+
+model Administrador {
+  id             Int      @id @default(autoincrement())
+  privilegios    String
+  gestionUsuarios Usuario[] @relation("GestionUsuarios")
+}
+
+model Transaccion {
+  id         Int      @id @default(autoincrement())
+  fecha      DateTime @default(now())
+  monto      Float
+  cuentaId   Int
+  cuenta     Cuenta   @relation(fields: [cuentaId], references: [id])
+  servicioId Int
+  servicio   Servicio @relation(fields: [servicioId], references: [id])
+  usuarioId  Int
+  usuario    Usuario   @relation(fields: [usuarioId], references: [id])
+  pagoServicios PagoServicio[]
+  transferencias Transferencia[]
+  clientes Cliente[] @relation("Historial")
+}
+
+model Servicio {
+  id          Int      @id @default(autoincrement())
+  tipo        TipoServicio
+  descripcion String
+  transacciones Transaccion[]
+}
+
+model PagoServicio {
+  id           Int      @id @default(autoincrement())
+  proveedor    String
+  monto        Float
+  transaccionId Int
+  transaccion  Transaccion @relation(fields: [transaccionId], references: [id])
+}
+
+model Transferencia {
+  id           Int      @id @default(autoincrement())
+  destinatario String
+  cuentaOrigenId Int
+  cuentaOrigen Cuenta  @relation("CuentaOrigen", fields: [cuentaOrigenId], references: [id])
+  transaccionId Int
+  transaccion   Transaccion @relation(fields: [transaccionId], references: [id])
+}
+
+model Cliente {
+  id            Int          @id @default(autoincrement())
+  usuarioId     Int
+  historial     Transaccion[] @relation("Historial")
+  usuario       Usuario     @relation(fields: [usuarioId], references: [id])
+}
